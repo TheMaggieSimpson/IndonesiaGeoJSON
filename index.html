@@ -35,18 +35,21 @@
                 zoomOffset: -1
             }).addTo(mymap)
 
-            // Province
-            var myProvinceLayer = L.geoJSON().addTo(mymap)
+            var myLayer = L.geoJSON().addTo(mymap)
             $.ajax({
                 dataType: "json",
+                // PROVINCES
                 url: "https://raw.githubusercontent.com/TheMaggieSimpson/IndonesiaGeoJSON/main/provinsi.json",
+                // CITIES AND REGENCIES
+                //url: "https://raw.githubusercontent.com/TheMaggieSimpson/IndonesiaGeoJSON/main/kota-kabupaten.json",
                 success: function(data) {
-                    myProvinceLayer.addData(data)
+                    myLayer.addData(data)
                 },
                 error: function (xhr) {
                     alert(xhr.statusText)
                 }
             })
+
         </script>
     </body>
 </html>
