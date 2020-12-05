@@ -10,20 +10,29 @@
                 height: 100%;
                 margin: 0;
             }
-            #map {
+            #mapProvince {
                 width: auto;
-                height: 100%;
+                height: 50%;
+                z-index: -1;
+            }
+            #mapCityRegency {
+                width: auto;
+                height: 50%;
+                z-index: -1;
             }
           </style>
     </head>
     <body>
-        <div id="map"></div>
+        <div id="mapProvince"></div>
+        <div id="mapCityRegency"></div>
         <script src='https://code.jquery.com/jquery-3.3.1.min.js', integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=', crossorigin='anonymous'></script>
+        <script src='https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js'></script>
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
         
         <script>
-            // Base Map
-            var mymap = L.map('map').setView([-0.884123, 116.038462], 5)
+            // Province
+            $('#mapProvince').LoadingOverlay('show')
+            var myProvinceMap = L.map('mapProvince').setView([-0.884123, 116.038462], 5)
             L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
                 maxZoom: 10,
                 minZoom: 5,
@@ -33,21 +42,50 @@
                 id: 'mapbox/streets-v11',
                 tileSize: 512,
                 zoomOffset: -1
-            }).addTo(mymap)
+            }).addTo(myProvinceMap)
 
-            var myLayer = L.geoJSON().addTo(mymap)
+            var myProvinceLayer = L.geoJSON().addTo(myProvinceMap)
             $.ajax({
                 dataType: "json",
-                // PROVINCES
-                url: "https://raw.githubusercontent.com/TheMaggieSimpson/IndonesiaGeoJSON/main/provinsi.json",
-                // CITIES AND REGENCIES
-                //url: "https://raw.githubusercontent.com/TheMaggieSimpson/IndonesiaGeoJSON/main/kota-kabupaten.json",
-                success: function(data) {
-                    myLayer.addData(data)
-                },
-                error: function (xhr) {
-                    alert(xhr.statusText)
-                }
+                url: "https://raw.githubusercontent.com/TheMaggieSimpson/IndonesiaGeoJSON/main/provinsi.json"
+            })
+            .done(function(data) {
+                myProvinceLayer.addData(data)
+            })
+            .fail(function (err) {
+                alert(err)
+            })
+            .always(function() {
+                $('#mapProvince').LoadingOverlay('hide')
+            })
+
+            // City and Regency
+            $('#mapCityRegency').LoadingOverlay('show')
+            var myCityMap = L.map('mapCityRegency').setView([-0.884123, 116.038462], 5)
+            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                maxZoom: 10,
+                minZoom: 5,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                    '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'mapbox/streets-v11',
+                tileSize: 512,
+                zoomOffset: -1
+            }).addTo(myCityMap)
+
+            var myCityLayer = L.geoJSON().addTo(myCityMap)
+            $.ajax({
+                dataType: "json",
+                url: "https://raw.githubusercontent.com/TheMaggieSimpson/IndonesiaGeoJSON/main/kota-kabupaten.json"
+            })
+            .done(function(data) {
+                myCityLayer.addData(data)
+            })
+            .fail(function (err) {
+                alert(err)
+            })
+            .always(function() {
+                $('#mapCityRegency').LoadingOverlay('hide')
             })
 
         </script>
